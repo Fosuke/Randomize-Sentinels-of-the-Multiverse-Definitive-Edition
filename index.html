@@ -202,10 +202,10 @@
                                         </v-col>
                                         <v-col>
                                             <v-list-item-title>
-                                                {{hero.variant}} 
+                                                {{hero.name}} 
                                             </v-list-item-title>
                                             <div>
-                                                {{hero.name}}
+                                                {{hero.variant}}
                                             </div>
                                             <v-list-item-subtitle>
                                                 {{hero.set}}
@@ -400,12 +400,13 @@
                     }
             },
             newVariant(index) {
-                let selectedHero = this.gameSetup.heroes[index]
-                let selectedHeroVariants = this.heroes.find((hero)=>{
-                    return hero.name == selectedHero.name
-                }).variants.filter((variant)=>{
-                    return variant.name != selectedHero.variant
+                let selectedHero = this.heroes.find((hero)=>{
+                    return hero.name == this.gameSetup.heroes[index].name
                 })
+                let selectedHeroVariants = selectedHero.variants.filter((variant)=>{
+                    return variant.name != this.gameSetup.heroes[index].variant
+                })
+
                 let variant = this.shuffle(this.activeList(selectedHeroVariants))[0]
                 this.gameSetup.heroes[index].variant = variant.name
                 this.gameSetup.heroes[index].set = [...new Set([selectedHero.set,variant.set])].toString()
