@@ -69,6 +69,36 @@
                                         :color="selectColor"
                                     >Select All Villains</v-btn>
                                 </div>
+                                <div class="d-flex align-center flex-column">
+                                    Advanced: 
+                                    <v-btn-toggle
+                                            v-model="advanced"
+                                            divided
+                                            variant="outlined"
+                                            size="small"
+                                            color="white"
+                                            density="compact"
+                                        >
+                                            <v-btn :value="false"><v-icon icon="mdi-minus-box"></v-icon></v-btn>
+                                            <v-btn value="random"><v-icon icon="mdi-help"></v-icon></v-btn>
+                                            <v-btn :value="true"><v-icon icon="mdi-alpha-a-box"></v-icon></v-btn>
+                                    </v-btn-toggle>
+                                    </div>
+                                <div class="d-flex align-center flex-column">
+                                    Event: 
+                                    <v-btn-toggle
+                                            v-model="event"
+                                            variant="outlined"
+                                            divided
+                                            size="small"
+                                            color="white"
+                                            density="compact"
+                                        >
+                                            <v-btn :value="false"><v-icon icon="mdi-minus-box"></v-icon></v-btn>
+                                            <v-btn value="random"><v-icon icon="mdi-help"></v-icon></v-btn>
+                                            <v-btn :value="true"><v-icon icon="mdi-alpha-e-box"></v-icon></v-btn>
+                                    </v-btn-toggle>
+                                </div>
                                 <div
                                     v-for="(villain, index) in villains"
                                     :key="villain.name"
@@ -219,8 +249,10 @@
                                             </v-btn>
                                         </v-col>
                                         <v-col>
-                                            <v-list-item-title>
+                                            <v-list-item-title class="text-wrap">
                                                 {{gameSetup.villain.name}} 
+                                                <span v-show="gameSetup.advanced"><v-icon icon="mdi-alpha-a-box"></span> 
+                                                    <span v-show="gameSetup.event"><v-icon icon="mdi-alpha-e-box"></span>
                                             </v-list-item-title>
                                             <div v-show="gameSetup.villain.name != gameSetup.villain.deck">
                                                 Deck: {{gameSetup.villain.deck}} 
@@ -352,6 +384,8 @@
                     {name:"Core Game",active:true},
                     {name:"Rook City Renegades",active:true}
                 ],
+                advanced: false,
+                event: false,
                 heroes: [
                     {name:"Absolute Zero",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
                     {name:"The Argent Adept",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
@@ -421,7 +455,9 @@
                 gameSetup: {
                     heroes: [],
                     villain: "",
-                    env: ""
+                    env: "",
+                    advanced: false,
+                    event: false
                 },
                 lock: {
                     heroes: [],
@@ -453,6 +489,7 @@
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             },
             randomize() {
+                console.log(this)
                 let H 
                 if(this.H == "?"){
                     H = this.getRandomInt(3,5)
@@ -469,6 +506,18 @@
                 })
                 this.gameSetup.env = this.shuffle(this.activeList(this.env))[0]
                 this.gameSetup.villain = this.shuffle(this.activeList(this.villains))[0]
+                if(this.advanced == "random"){
+                    this.gameSetup.advanced = (this.getRandomInt(0,1) == 1)
+                }else{
+                    this.gameSetup.advanced = this.advanced
+                }
+                if(this.gameSetup.villain.name != this.gameSetup.villain.deck){
+                    this.gameSetup.event = false
+                }else if(this.event == "random"){
+                    this.gameSetup.event = (this.getRandomInt(0,1) == 1)
+                }else{
+                    this.gameSetup.event = this.event
+                }
             },
             shuffle(unshuffled){
                 return  unshuffled
