@@ -331,33 +331,35 @@
             
         </v-container>
       </v-main>
-      <v-btn position="fixed" location="bottom left" variant="flat" color="error" @click="reset" class="ml-1 mb-2">
-        <v-icon icon="mdi-cancel"></v-icon>
-        <v-tooltip
-            activator="parent"
-            location="top"
-        >Clear</v-tooltip>
-    </v-btn>
-    <v-btn
-        dark
-        variant="flat"
-        position="fixed" location="bottom center"
-        class="mb-2"
-        @click="dialog = true"
-        >
-        <v-icon icon="mdi-cog"></v-icon>
-        <v-tooltip
-            activator="parent"
-            location="top"
-        >Settings</v-tooltip>
-    </v-btn>
-    <v-btn position="fixed" location="bottom right" variant="flat" color="success" @click="randomize" class="mr-1 mb-2">
-        <v-icon icon="mdi-shuffle"></v-icon>
-        <v-tooltip
-            activator="parent"
-            location="top"
-        >Randomize</v-tooltip>
-    </v-btn>
+      <v-bottom-navigation grow multiple v-model="bottomNav">
+        <v-btn variant="flat" color="error" @click="reset" class="" v-btn--selected>
+                <v-icon icon="mdi-cancel"></v-icon>
+                <v-tooltip
+                    activator="parent"
+                    location="top"
+                >Clear</v-tooltip>
+            </v-btn>
+            <v-btn
+                dark
+                variant="flat"
+                
+                class="v-btn--selected"
+                @click="dialog = true"
+                >
+                <v-icon icon="mdi-cog"></v-icon>
+                <v-tooltip
+                    activator="parent"
+                    location="top"
+                >Settings</v-tooltip>
+            </v-btn>
+            <v-btn variant="flat" color="success" @click="randomize" :class="'v-btn--selected'">
+                <v-icon icon="mdi-shuffle"></v-icon>
+                <v-tooltip
+                    activator="parent"
+                    location="top"
+                >Randomize</v-tooltip>
+            </v-btn>
+        </v-bottom-navigation>
     </v-app>
   </div>
 
@@ -377,6 +379,7 @@
                 randomButton2: 'secondary',
                 clearColor: '',
                 selectColor: '',
+                
                 dialog: false,
                 settingsTab: "Villains",
                 settingsTabItems: ["Villains","Env","Heroes","Sets"],
@@ -483,6 +486,14 @@
                 }).map((set)=>{
                     return set.name
                 })
+            },
+            bottomNav: {
+                get() {
+                    return [0,1,2]
+                },
+                set (newValue) {
+
+                }
             }
         },
         methods: {
