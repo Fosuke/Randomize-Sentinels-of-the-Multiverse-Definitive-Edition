@@ -78,6 +78,7 @@
                                         v-model="villains[index].active"
                                         hide-details
                                         inset
+                                        v-show="activeSet(villain.set)"
                                         :label="`${villain.name}`"
                                     ></v-switch>
                                     
@@ -107,6 +108,7 @@
                                         v-model="env[index].active"
                                         hide-details
                                         inset
+                                        v-show="activeSet(envDeck.set)"
                                         :label="`${envDeck.name}`"
                                     ></v-switch>
                                 </div>
@@ -135,25 +137,42 @@
                                         v-model="heroes[index].active"
                                         hide-details
                                         inset
+                                        v-show="activeSet(hero.set)"
                                         :label="`${hero.name}`"
                                     ></v-switch>
-                                    <v-fade-transition v-show="heroes[index].active">
-                                        <v-list density="compact">
+                                    <v-fade-transition v-show="heroes[index].active && activeSet(hero.set)">
+                                        <v-list density="compact" class="py-0 rounded-shaped bg-blue-grey-lighten-5">
                                             <v-list-item
                                                 v-for="(variant, vindex) in hero.variants"
                                                 :key="variant.name"
                                                 variant="outlined"
-                                                class="rounded-shaped bg-blue-grey-lighten-5"
+                                                class=""
+                                                v-show="activeSet(variant.set)"
                                             >
                                                 <v-switch
                                                     v-model="heroes[index].variants[vindex].active"
                                                     hide-details
                                                     inset
+                                                    
                                                     :label="`${variant.name}`"
                                                 ></v-switch>
                                             </v-list-item>
                                         </v-list>
                                     </v-fade-transition>
+                                </div>
+                            </v-window-item>
+                            <v-window-item :value="settingsTabItems[3]" class="rounded-shaped">
+                                <div
+                                    v-for="(set, index) in sets"
+                                    :key="set.name"
+                                    
+                                >
+                                    <v-switch
+                                        v-model="sets[index].active"
+                                        hide-details
+                                        inset
+                                        :label="`${set.name}`"
+                                    ></v-switch>
                                 </div>
                             </v-window-item>
                         </v-window>
@@ -327,7 +346,11 @@
                 selectColor: '',
                 dialog: false,
                 settingsTab: "Villains",
-                settingsTabItems: ["Villains","Env","Heroes"],
+                settingsTabItems: ["Villains","Env","Heroes","Sets"],
+                sets: [
+                    {name:"Core Game",active:true},
+                    {name:"Rook City Renegades",active:true}
+                ],
                 heroes: [
                     {name:"Absolute Zero",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
                     {name:"The Argent Adept",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
@@ -410,8 +433,15 @@
             activeHeroes() {
                 return this.heroes.filter((hero)=>{
                     return hero.active && (hero.variants.filter((variant)=>{
-                        return variant.active
-                    }).length > 0)
+                        return variant.active && this.activeSet(variant.set)
+                    }).length > 0) && this.activeSet(hero.set)
+                })
+            },
+            activeSets() {
+                return this.sets.filter((set)=>{
+                    return set.active
+                }).map((set)=>{
+                    return set.name
                 })
             }
         },
@@ -447,7 +477,7 @@
             },
             activeList(variants) {
                 return variants.filter((variant)=>{
-                    return variant.active
+                    return variant.active && this.activeSet(variant.set)
                 })
             },
             newHero(index) {
@@ -513,6 +543,9 @@
                         })
                     }
                 })
+            },
+            activeSet(set){
+                return this.activeSets.includes(set)
             }
         }
     })
