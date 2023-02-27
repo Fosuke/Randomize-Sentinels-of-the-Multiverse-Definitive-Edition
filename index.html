@@ -22,124 +22,141 @@
                     
                 </template>
                 <v-card>
-                    <v-toolbar
-                    dark
-                    color="primary"
-                    >
                     
-                    <v-toolbar-title>Settings</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-toolbar-items>
-                        <v-btn
-                        variant="text"
-                        @click="dialog = false"
+                    <v-card-title class="pa-0 ma-0">
+                        <v-toolbar
+                            dark
+                            color="primary"
+                            flat
                         >
-                        Save
-                        </v-btn>
-                    </v-toolbar-items>
-                    </v-toolbar>
-                    <div class="rounded-shaped bg-red-darken-2">
-                        <div class="d-flex justify-center align-baseline" style="gap: 1rem">
-                            <v-btn 
-                                @click="clear('villains')" 
-                                size="small"
-                                variant="outlined"
-                                :color="clearColor"
-                            >Clear Villains</v-btn>
-                            <v-btn 
-                                @click="selectAll('villains')"
-                                size="small"
-                                variant="outlined"
-                                :color="selectColor"
-                            >Select All Villains</v-btn>
-                        </div>
-                        <div
-                            v-for="(villain, index) in villains"
-                            :key="villain.name"
+                        
+                            <v-toolbar-title>Settings</v-toolbar-title>
+                            <v-spacer></v-spacer>
+                            <v-toolbar-items>
+                                <v-btn
+                                variant="text"
+                                @click="dialog = false"
+                                >
+                                Save
+                                </v-btn>
+                            </v-toolbar-items>
                             
+                        </v-toolbar>
+                        <v-tabs
+                            v-model="settingsTab"
+                            bg-color="primary"
+                            class="text-no-wrap"
+                            :items="settingsTabItems"
                         >
-                            <v-switch
-                                v-model="villains[index].active"
-                                hide-details
-                                inset
-                                :label="`${villain.name}`"
-                            ></v-switch>
-                            
-                        </div>
-                    </div>
-                    <div class="rounded-shaped bg-purple-darken-2">
-                        <div class="d-flex justify-center align-baseline" style="gap: 1rem">
-                            <v-btn 
-                                @click="clear('env')" 
-                                size="small"
-                                variant="outlined"
-                                :color="clearColor"
-                            >Clear Environment</v-btn>
-                            <v-btn 
-                                @click="selectAll('env')"
-                                size="small"
-                                variant="outlined"
-                                :color="selectColor"
-                            >Select All Environment</v-btn>
-                        </div>
-                        <div
-                            v-for="(envDeck, index) in env"
-                            :key="envDeck.name"
-                            
-                        >
-                            <v-switch
-                                v-model="env[index].active"
-                                hide-details
-                                inset
-                                :label="`${envDeck.name}`"
-                            ></v-switch>
-                        </div>
-                    </div>
-                    <div class="rounded-shaped bg-blue-darken-2">
-                        <div class="d-flex justify-center align-baseline" style="gap: 1rem">
-                            <v-btn 
-                                @click="clear('heroes')" 
-                                size="small"
-                                variant="outlined"
-                                :color="clearColor"
-                            >Clear Heroes</v-btn>
-                            <v-btn 
-                                @click="selectAll('heroes')"
-                                size="small"
-                                variant="outlined"
-                                :color="selectColor"
-                            >Select All Heroes</v-btn>
-                        </div>
-                        <div
-                            v-for="(hero, index) in heroes"
-                            :key="hero.name"
-                            
-                        >
-                            <v-switch
-                                v-model="heroes[index].active"
-                                hide-details
-                                inset
-                                :label="`${hero.name}`"
-                            ></v-switch>
-                            <v-fade-transition v-show="heroes[index].active">
-                                <v-list density="compact">
-                                    <v-list-item
-                                        v-for="(variant, vindex) in hero.variants"
-                                        :key="variant.name"
+                        </v-tabs>
+                    </v-card-title>
+                    <v-card-text class="pa-0 ma-0">
+                        
+                        <v-window v-model="settingsTab">
+                            <v-window-item :value="settingsTabItems[0]" class="rounded-shaped bg-red-darken-2">
+                                <div class="d-flex justify-center align-baseline" style="gap: 1rem">
+                                    <v-btn 
+                                        @click="clear('villains')" 
+                                        size="small"
                                         variant="outlined"
-                                        class="rounded-shaped bg-blue-grey-lighten-5"
-                                    >
-                                        <v-switch
-                                            v-model="heroes[index].variants[vindex].active"
-                                            hide-details
-                                            inset
-                                            :label="`${variant.name}`"
-                                        ></v-switch>
-                                    </v-list-item>
-                                </v-list>
-                            </v-fade-transition>
-                        </div>
-                    </div>
+                                        :color="clearColor"
+                                    >Clear Villains</v-btn>
+                                    <v-btn 
+                                        @click="selectAll('villains')"
+                                        size="small"
+                                        variant="outlined"
+                                        :color="selectColor"
+                                    >Select All Villains</v-btn>
+                                </div>
+                                <div
+                                    v-for="(villain, index) in villains"
+                                    :key="villain.name"
+                                    
+                                >
+                                    <v-switch
+                                        v-model="villains[index].active"
+                                        hide-details
+                                        inset
+                                        :label="`${villain.name}`"
+                                    ></v-switch>
+                                    
+                                </div>
+                            </v-window-item>
+                            <v-window-item :value="settingsTabItems[1]" class="rounded-shaped bg-purple-darken-2">
+                                <div class="d-flex justify-center align-baseline" style="gap: 1rem">
+                                    <v-btn 
+                                        @click="clear('env')" 
+                                        size="small"
+                                        variant="outlined"
+                                        :color="clearColor"
+                                    >Clear Environment</v-btn>
+                                    <v-btn 
+                                        @click="selectAll('env')"
+                                        size="small"
+                                        variant="outlined"
+                                        :color="selectColor"
+                                    >Select All Environment</v-btn>
+                                </div>
+                                <div
+                                    v-for="(envDeck, index) in env"
+                                    :key="envDeck.name"
+                                    
+                                >
+                                    <v-switch
+                                        v-model="env[index].active"
+                                        hide-details
+                                        inset
+                                        :label="`${envDeck.name}`"
+                                    ></v-switch>
+                                </div>
+                            </v-window-item>
+                            <v-window-item :value="settingsTabItems[2]" class="rounded-shaped bg-blue-darken-2">
+                                <div class="d-flex justify-center align-baseline" style="gap: 1rem">
+                                    <v-btn 
+                                        @click="clear('heroes')" 
+                                        size="small"
+                                        variant="outlined"
+                                        :color="clearColor"
+                                    >Clear Heroes</v-btn>
+                                    <v-btn 
+                                        @click="selectAll('heroes')"
+                                        size="small"
+                                        variant="outlined"
+                                        :color="selectColor"
+                                    >Select All Heroes</v-btn>
+                                </div>
+                                <div
+                                    v-for="(hero, index) in heroes"
+                                    :key="hero.name"
+                                    
+                                >
+                                    <v-switch
+                                        v-model="heroes[index].active"
+                                        hide-details
+                                        inset
+                                        :label="`${hero.name}`"
+                                    ></v-switch>
+                                    <v-fade-transition v-show="heroes[index].active">
+                                        <v-list density="compact">
+                                            <v-list-item
+                                                v-for="(variant, vindex) in hero.variants"
+                                                :key="variant.name"
+                                                variant="outlined"
+                                                class="rounded-shaped bg-blue-grey-lighten-5"
+                                            >
+                                                <v-switch
+                                                    v-model="heroes[index].variants[vindex].active"
+                                                    hide-details
+                                                    inset
+                                                    :label="`${variant.name}`"
+                                                ></v-switch>
+                                            </v-list-item>
+                                        </v-list>
+                                    </v-fade-transition>
+                                </div>
+                            </v-window-item>
+                        </v-window>
+                    </v-card-text>
                 </v-card>
             </v-dialog>
             <v-row>
@@ -308,6 +325,8 @@
                 clearColor: '',
                 selectColor: '',
                 dialog: false,
+                settingsTab: "Villains",
+                settingsTabItems: ["Villains","Env","Heroes"],
                 heroes: [
                     {name:"Absolute Zero",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
                     {name:"The Argent Adept",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
