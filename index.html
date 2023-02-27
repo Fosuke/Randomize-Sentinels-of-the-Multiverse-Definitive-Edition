@@ -294,37 +294,38 @@
                                 </v-list-item>
                             </v-list>
                         </v-card-text>
-                        <v-card-actions>
-                            <v-row>
-                                <v-col cols="4">
-                                    <v-btn position="absolute" location="bottom left" variant="flat" color="error" @click="reset" class="ml-1 mb-2">
-                                        Clear
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="4">
-                                    <v-btn
-                                        dark
-                                        variant="flat"
-                                        position="absolute" location="bottom center"
-                                        class="mb-2"
-                                        @click="dialog = true"
-                                        >
-                                        Settings
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="4">
-                                    <v-btn position="absolute" location="bottom right" variant="flat" color="primary" @click="randomize" class="mr-1 mb-2">
-                                        Randomize
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
-                        </v-card-actions>
-                      </v-card>
                 </v-col>
             </v-row>
             
         </v-container>
       </v-main>
+      <v-btn position="fixed" location="bottom left" variant="flat" color="error" @click="reset" class="ml-1 mb-2">
+        <v-icon icon="mdi-cancel"></v-icon>
+        <v-tooltip
+            activator="parent"
+            location="top"
+        >Clear</v-tooltip>
+    </v-btn>
+    <v-btn
+        dark
+        variant="flat"
+        position="fixed" location="bottom center"
+        class="mb-2"
+        @click="dialog = true"
+        >
+        <v-icon icon="mdi-cog"></v-icon>
+        <v-tooltip
+            activator="parent"
+            location="top"
+        >Settings</v-tooltip>
+    </v-btn>
+    <v-btn position="fixed" location="bottom right" variant="flat" color="success" @click="randomize" class="mr-1 mb-2">
+        <v-icon icon="mdi-shuffle"></v-icon>
+        <v-tooltip
+            activator="parent"
+            location="top"
+        >Randomize</v-tooltip>
+    </v-btn>
     </v-app>
   </div>
 
