@@ -332,7 +332,7 @@
         </v-container>
       </v-main>
       <v-bottom-navigation grow multiple v-model="bottomNav">
-        <v-btn variant="flat" color="error" @click="reset" class="" v-btn--selected>
+        <v-btn variant="flat" color="error" @click="reset">
                 <v-icon icon="mdi-cancel"></v-icon>
                 <v-tooltip
                     activator="parent"
@@ -342,8 +342,6 @@
             <v-btn
                 dark
                 variant="flat"
-                
-                class="v-btn--selected"
                 @click="dialog = true"
                 >
                 <v-icon icon="mdi-cog"></v-icon>
@@ -352,7 +350,7 @@
                     location="top"
                 >Settings</v-tooltip>
             </v-btn>
-            <v-btn variant="flat" color="success" @click="randomize" :class="'v-btn--selected'">
+            <v-btn variant="flat" color="success" @click="randomize">
                 <v-icon icon="mdi-shuffle"></v-icon>
                 <v-tooltip
                     activator="parent"
