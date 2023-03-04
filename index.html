@@ -102,7 +102,7 @@
                                 <div
                                     v-for="(villain, index) in villains"
                                     :key="villain.name"
-                                    
+                                    :class="{'bg-red-lighten-2': (!villain.active)}"
                                 >
                                     <v-switch
                                         v-model="villains[index].active"
@@ -132,7 +132,7 @@
                                 <div
                                     v-for="(envDeck, index) in env"
                                     :key="envDeck.name"
-                                    
+                                    :class="{'bg-purple-lighten-2': (!envDeck.active)}"
                                 >
                                     <v-switch
                                         v-model="env[index].active"
@@ -161,7 +161,7 @@
                                 <div
                                     v-for="(hero, index) in heroes"
                                     :key="hero.name"
-                                    
+                                    :class="{'bg-blue-lighten-2': (!hero.active)}"
                                 >
                                     <v-switch
                                         v-model="heroes[index].active"
@@ -176,7 +176,7 @@
                                                 v-for="(variant, vindex) in hero.variants"
                                                 :key="variant.name"
                                                 variant="outlined"
-                                                class=""
+                                                :class="{'bg-grey-lighten-1': (!variant.active)}"
                                                 v-show="activeSet(variant.set)"
                                             >
                                                 <v-switch
@@ -205,6 +205,41 @@
                                     ></v-switch>
                                 </div>
                             </v-window-item>
+                            <v-window-item :value="settingsTabItems[4]" class="rounded-shaped">
+                                <v-row>
+                                    <v-col>
+                                        <v-alert
+                                            density="compact"
+                                            type="warning"
+                                            title="Settings Settings"
+                                        >
+                                            This is experimental feature with no guide rails. 
+                                            Here the underlying data structure used to populate everything is made editable. 
+                                            Exposing this allows you to modify whatever you want or add your own custom content.<br>
+                                            <b>Safety not guaranteed.</b>
+                                        </v-alert>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col>
+                                        <v-textarea rows="15" v-model="textSettings"></v-textarea>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col>
+                                        <v-btn color="secondary" @click="defaultSettings">Default Settings</v-btn>
+                                    </v-col>
+                                    <v-col>
+                                        <v-btn color="info" @click="reloadSettings">Reload Settings</v-btn>
+                                    </v-col>
+                                    <v-col>
+                                        <v-btn color="success" @click="loadSettings">Load Settings</v-btn>
+                                    </v-col>
+                                </v-row>
+                                
+                                
+                                
+                            </v-window-item>
                         </v-window>
                     </v-card-text>
                 </v-card>
@@ -213,11 +248,26 @@
                 <v-col>
                     <v-card class="bg-blue-lighten-5 ">
                         <v-card-item class="rounded bg-blue-grey-lighten-4">
-                          <v-card-title>Randomize Sentinels of the Multiverse: Definitive Edition</v-card-title>
+                            <v-row>
+                                <v-col sm="11" cols="10">
+                                    <v-card-title :class="{'text-wrap':inactiveGame}">Randomize Sentinels of the Multiverse: Definitive Edition</v-card-title>
                   
-                          <v-card-subtitle>By Fosuke</v-card-subtitle>
+                                    <v-card-subtitle>By Fosuke</v-card-subtitle>
+                                </v-col>
+                                <v-col cols="1">
+                                    <v-card-actions>
+                                        <v-btn
+                                            dark
+                                            icon="mdi-cog"
+                                            @click="dialog = true"
+                                            >
+                                        </v-btn>
+                                      </v-card-actions>
+                                </v-col>
+                            </v-row>
                         </v-card-item>
                         <div class="d-flex align-center flex-column">
+                            Hero Count:
                             <v-btn-toggle
                                     v-model="H"
                                     divided
@@ -242,10 +292,6 @@
                                         <v-col cols="3" md="2">
                                             <v-btn size="small" @click="newVillain" :color="randomButton">
                                                 <v-icon icon="mdi-shuffle"></v-icon>
-                                                <v-tooltip
-                                                    activator="parent"
-                                                    location="top"
-                                                >random villain</v-tooltip>
                                             </v-btn>
                                         </v-col>
                                         <v-col>
@@ -272,10 +318,6 @@
                                         <v-col cols="3" md="2">
                                             <v-btn size="small" @click="newEnv" :color="randomButton">
                                                 <v-icon icon="mdi-shuffle"></v-icon>
-                                                <v-tooltip
-                                                    activator="parent"
-                                                    location="top"
-                                                >random environment</v-tooltip>
                                             </v-btn>
                                         </v-col>
                                         <v-col>
@@ -298,17 +340,9 @@
                                         <v-col cols="3" md="2">
                                             <v-btn size="small" @click="newHero(index)"  :color="randomButton">
                                                 <v-icon icon="mdi-shuffle"></v-icon>
-                                                <v-tooltip
-                                                    activator="parent"
-                                                    location="top"
-                                                >random hero</v-tooltip>
                                             </v-btn>
                                             <v-btn size="small"  @click="newVariant(index)"  :color="randomButton2">
                                                 <v-icon icon="mdi-shuffle-variant"></v-icon>
-                                                <v-tooltip
-                                                    activator="parent"
-                                                    location="top"
-                                                >random variant</v-tooltip>
                                             </v-btn>
                                         </v-col>
                                         <v-col>
@@ -331,31 +365,12 @@
             
         </v-container>
       </v-main>
-      <v-bottom-navigation grow multiple v-model="bottomNav">
+      <v-bottom-navigation grow multiple v-model="bottomNav" density="compact">
         <v-btn variant="flat" color="error" @click="reset">
                 <v-icon icon="mdi-cancel"></v-icon>
-                <v-tooltip
-                    activator="parent"
-                    location="top"
-                >Clear</v-tooltip>
-            </v-btn>
-            <v-btn
-                dark
-                variant="flat"
-                @click="dialog = true"
-                >
-                <v-icon icon="mdi-cog"></v-icon>
-                <v-tooltip
-                    activator="parent"
-                    location="top"
-                >Settings</v-tooltip>
             </v-btn>
             <v-btn variant="flat" color="success" @click="randomize">
                 <v-icon icon="mdi-shuffle"></v-icon>
-                <v-tooltip
-                    activator="parent"
-                    location="top"
-                >Randomize</v-tooltip>
             </v-btn>
         </v-bottom-navigation>
     </v-app>
@@ -370,7 +385,655 @@
 
     const vuetify = createVuetify()
 
-    
+    const defaultSettings = {
+        "villains": [
+            {
+                "name": "Akash'Bhuta",
+                "deck": "Akash'Bhuta",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Akash'Mecha",
+                "deck": "Akash'Bhuta",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Baron Blade",
+                "deck": "Baron Blade",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Mad Bomber Baron Blade",
+                "deck": "Baron Blade",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Citizen Dawn",
+                "deck": "Citizen Dawn",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Sunrise Citizen Dawn",
+                "deck": "Citizen Dawn",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Grand Warlord Voss",
+                "deck": "Grand Warlord Voss",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Censor",
+                "deck": "Grand Warlord Voss",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "The Matriarch",
+                "deck": "The Matriarch",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "The Mocktriarch",
+                "deck": "The Matriarch",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Omnitron",
+                "deck": "Omnitron",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Cosmic Omnitron",
+                "deck": "Omnitron",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Ambuscade",
+                "deck": "Ambuscade",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Vainglorious Ambuscade",
+                "deck": "Ambuscade",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Apex",
+                "deck": "Apex",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Blood-Leashed Apex",
+                "deck": "Apex",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "The Fey-Court",
+                "deck": "The Fey-Court",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "War-Girded Dagda & Morrigan",
+                "deck": "The Fey-Court",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "GloomWeaver",
+                "deck": "GloomWeaver",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Soultaker GloomWeaver",
+                "deck": "GloomWeaver",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Kismet",
+                "deck": "Kismet",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Empowered Kismet",
+                "deck": "Kismet",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "The Organization",
+                "deck": "The Organization",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "The Bear",
+                "deck": "The Organization",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Plague Rat",
+                "deck": "Plague Rat",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Doctor Toxica",
+                "deck": "Plague Rat",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Spite",
+                "deck": "Spite",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Abomination Spite",
+                "deck": "Spite",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Terrorform",
+                "deck": "Terrorform",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Terrorform Mark III",
+                "deck": "Terrorform",
+                "set": "Rook City Renegades",
+                "active": true
+            }
+        ],
+        "env": [
+            {
+                "name": "Freedom Tower",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Insula Primalis",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Magmaria",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Megalopolis",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "The Ruins of Atlantis",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Wagner Mars Base",
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Diamond Manor",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Pike Industrial Complex",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "The Realm of Discord",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Rook City",
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "The Temple of Zhu Long",
+                "set": "Rook City Renegades",
+                "active": true
+            }
+        ],
+        "heroes": [
+            {
+                "name": "Absolute Zero",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "The Argent Adept",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Bunker",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "Stealth Suit",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Captain Cosmic",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Fanatic",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "Haunted",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Haka",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "Werewolf",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Legacy",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Ra",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "Backdraft",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Tachyon",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Tempest",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Unity",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "Scavenger",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "The Wraith",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Core Game",
+                        "active": true
+                    },
+                    {
+                        "name": "Detective",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Alpha",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Reporter",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "2000",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Expatriette",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Dark Watch",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Eclipse",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "The Harpy",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Dark Watch",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Blood Raven",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Mr. Fixer",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Dark Watch",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Black Fist",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "NightMist",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Dark Watch",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Mentor",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Rook City Renegades",
+                "active": true
+            },
+            {
+                "name": "Setback",
+                "variants": [
+                    {
+                        "name": "Base",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "First Appearance",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Dark Watch",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    },
+                    {
+                        "name": "Fey-Cursed",
+                        "set": "Rook City Renegades",
+                        "active": true
+                    }
+                ],
+                "set": "Rook City Renegades",
+                "active": true
+            }
+        ],
+        "sets": [
+            {
+                "name": "Core Game",
+                "active": true
+            },
+            {
+                "name": "Rook City Renegades",
+                "active": true
+            }
+        ]
+    }
 
     const app = createApp({
         data() {
@@ -379,84 +1042,16 @@
                 randomButton2: 'secondary',
                 clearColor: '',
                 selectColor: '',
-                
+                textSettings: '',
                 dialog: false,
                 settingsTab: "Villains",
-                settingsTabItems: ["Villains","Env","Heroes","Sets"],
-                sets: [
-                    {name:"Core Game",active:true},
-                    {name:"Rook City Renegades",active:true}
-                ],
+                settingsTabItems: ["Villains","Env","Heroes","Sets","Settings"],
+                sets: [],
                 advanced: false,
                 event: false,
-                heroes: [
-                    {name:"Absolute Zero",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
-                    {name:"The Argent Adept",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
-                    {name:"Bunker",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},{name:"Stealth Suit",set:"Rook City Renegades",active: true},],set: "Core Game",active: true},
-                    {name:"Captain Cosmic",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
-                    {name:"Fanatic",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},{name:"Haunted",set:"Rook City Renegades",active: true},],set: "Core Game",active: true},
-                    {name:"Haka",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},{name:"Werewolf",set:"Rook City Renegades",active: true},],set: "Core Game",active: true},
-                    {name:"Legacy",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
-                    {name:"Ra",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},{name:"Backdraft",set:"Rook City Renegades",active: true},],set: "Core Game",active: true},
-                    {name:"Tachyon",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
-                    {name:"Tempest",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},],set: "Core Game",active: true},
-                    {name:"Unity",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},{name:"Scavenger",set:"Rook City Renegades",active: true},],set: "Core Game",active: true},
-                    {name:"The Wraith",variants:[{name:"Base",set:"Core Game",active: true},{name:"First Appearance",set:"Core Game",active: true},{name:"Detective",set:"Rook City Renegades",active: true},],set: "Core Game",active: true},
-                    
-                    {name:"Alpha",variants:[{name:"Base",set:"Rook City Renegades",active: true},{name:"First Appearance",set:"Rook City Renegades",active: true},{name:"Reporter",set:"Rook City Renegades",active: true},{name:"2000",set:"Rook City Renegades",active: true},],set: "Rook City Renegades",active: true},
-                    {name:"Expatriette",variants:[{name:"Base",set:"Rook City Renegades",active: true},{name:"First Appearance",set:"Rook City Renegades",active: true},{name:"Dark Watch",set:"Rook City Renegades",active: true},{name:"Eclipse",set:"Rook City Renegades",active: true},],set: "Rook City Renegades",active: true},
-                    {name:"The Harpy",variants:[{name:"Base",set:"Rook City Renegades",active: true},{name:"First Appearance",set:"Rook City Renegades",active: true},{name:"Dark Watch",set:"Rook City Renegades",active: true},{name:"Blood Raven",set:"Rook City Renegades",active: true},],set: "Rook City Renegades",active: true},
-                    {name:"Mr. Fixer",variants:[{name:"Base",set:"Rook City Renegades",active: true},{name:"First Appearance",set:"Rook City Renegades",active: true},{name:"Dark Watch",set:"Rook City Renegades",active: true},{name:"Black Fist",set:"Rook City Renegades",active: true},],set: "Rook City Renegades",active: true},
-                    {name:"NightMist",variants:[{name:"Base",set:"Rook City Renegades",active: true},{name:"First Appearance",set:"Rook City Renegades",active: true},{name:"Dark Watch",set:"Rook City Renegades",active: true},{name:"Mentor",set:"Rook City Renegades",active: true},],set: "Rook City Renegades",active: true},
-                    {name:"Setback",variants:[{name:"Base",set:"Rook City Renegades",active: true},{name:"First Appearance",set:"Rook City Renegades",active: true},{name:"Dark Watch",set:"Rook City Renegades",active: true},{name:"Fey-Cursed",set:"Rook City Renegades",active: true},],set: "Rook City Renegades",active: true},
-                ],
-                env: [
-                    {name:"Freedom Tower",set:"Core Game",active:true},
-                    {name:"Insula Primalis",set:"Core Game",active:true},
-                    {name:"Magmaria",set:"Core Game",active:true},
-                    {name:"Megalopolis",set:"Core Game",active:true},
-                    {name:"The Ruins of Atlantis",set:"Core Game",active:true},
-                    {name:"Wagner Mars Base",set:"Core Game",active:true},
-
-                    {name:"Diamond Manor",set:"Rook City Renegades",active:true},
-                    {name:"Pike Industrial Complex",set:"Rook City Renegades",active:true},
-                    {name:"The Realm of Discord",set:"Rook City Renegades",active:true},
-                    {name:"Rook City",set:"Rook City Renegades",active:true},                    
-                    {name:"The Temple of Zhu Long",set:"Rook City Renegades",active:true},
-                ],
-                villains: [
-                    {name:"Akash'Bhuta",deck:"Akash'Bhuta",set:"Core Game",active:true},
-                    {name:"Akash'Mecha",deck:"Akash'Bhuta",set:"Core Game",active:true},
-                    {name:"Baron Blade",deck:"Baron Blade",set:"Core Game",active:true},
-                    {name:"Mad Bomber Baron Blade",deck:"Baron Blade",set:"Core Game",active:true},
-                    {name:"Citizen Dawn",deck:"Citizen Dawn",set:"Core Game",active:true},
-                    {name:"Sunrise Citizen Dawn",deck:"Citizen Dawn",set:"Core Game",active:true},
-                    {name:"Grand Warlord Voss",deck:"Grand Warlord Voss",set:"Core Game",active:true},
-                    {name:"Censor",deck:"Grand Warlord Voss",set:"Core Game",active:true},
-                    {name:"The Matriarch",deck:"The Matriarch",set:"Core Game",active:true},
-                    {name:"The Mocktriarch",deck:"The Matriarch",set:"Core Game",active:true},
-                    {name:"Omnitron",deck:"Omnitron",set:"Core Game",active:true},
-                    {name:"Cosmic Omnitron",deck:"Omnitron",set:"Core Game",active:true},
-                    
-                    {name:"Ambuscade",deck:"Ambuscade",set:"Rook City Renegades",active:true},
-                    {name:"Vainglorious Ambuscade",deck:"Ambuscade",set:"Rook City Renegades",active:true},
-                    {name:"Apex",deck:"Apex",set:"Rook City Renegades",active:true},
-                    {name:"Blood-Leashed Apex",deck:"Apex",set:"Rook City Renegades",active:true},
-                    {name:"The Fey-Court",deck:"The Fey-Court",set:"Rook City Renegades",active:true},
-                    {name:"War-Girded Dagda & Morrigan",deck:"The Fey-Court",set:"Rook City Renegades",active:true},
-                    {name:"GloomWeaver",deck:"GloomWeaver",set:"Rook City Renegades",active:true},
-                    {name:"Soultaker GloomWeaver",deck:"GloomWeaver",set:"Rook City Renegades",active:true},
-                    {name:"Kismet",deck:"Kismet",set:"Rook City Renegades",active:true},
-                    {name:"Empowered Kismet",deck:"Kismet",set:"Rook City Renegades",active:true},
-                    {name:"The Organization",deck:"The Organization",set:"Rook City Renegades",active:true},
-                    {name:"The Bear",deck:"The Organization",set:"Rook City Renegades",active:true},
-                    {name:"Plague Rat",deck:"Plague Rat",set:"Rook City Renegades",active:true},
-                    {name:"Doctor Toxica",deck:"Plague Rat",set:"Rook City Renegades",active:true},
-                    {name:"Spite",deck:"Spite",set:"Rook City Renegades",active:true},
-                    {name:"Abomination Spite",deck:"Spite",set:"Rook City Renegades",active:true},
-                    {name:"Terrorform",deck:"Terrorform",set:"Rook City Renegades",active:true},
-                    {name:"Terrorform Mark III",deck:"Terrorform",set:"Rook City Renegades",active:true},
-                ],
+                heroes: [],
+                env: [],
+                villains: [],
                 H:"3",
                 gameSetup: {
                     heroes: [],
@@ -473,6 +1068,9 @@
             }
         },
         computed:{
+            inactiveGame() {
+                return this.gameSetup.villain == ''
+            },
             activeHeroes() {
                 return this.heroes.filter((hero)=>{
                     return hero.active && (hero.variants.filter((variant)=>{
@@ -506,59 +1104,9 @@
                 },
                 set(newValue) {
                     if(newValue){
-                        console.log(newValue)
-                        console.log(newValue.villains)
-                        newValue.villains.forEach((item)=>{
-                            let index = this.villains.findIndex((villain)=>{
-                                 return villain.name == item.name
-                            })
-                            if(index > -1){
-                                this.villains[index] = item
-                            }else{
-                                this.villains.push(item)
-                            }
-                        })
-                        newValue.env.forEach((item)=>{
-                            let index = this.env.findIndex((envDeck)=>{
-                                 return envDeck.name == item.name
-                            })
-                            if(index > -1){
-                                this.env[index] = item
-                            }else{
-                                this.env.push(item)
-                            }
-                        })
-                        newValue.heroes.forEach((item)=>{
-                            let index = this.heroes.findIndex((hero)=>{
-                                 return hero.name == item.name
-                            })
-                            if(index > -1){
-                                item.variants.forEach((subitem)=>{
-                                    let i = this.heroes[index].variants.findIndex((variant)=>{
-                                        return variant.name == subitem.name
-                                    })
-                                    if(i > -1){
-                                        this.heroes[index].variants[i] = subitem
-                                    }else{
-                                        this.heroes[index].variants.push(subitem)
-                                    }
-                                })
-
-                                this.heroes[index].active = item.active
-                            }else{
-                                this.heroes.push(item)
-                            }
-                        })
-                        newValue.sets.forEach((item)=>{
-                            let index = this.sets.findIndex((set)=>{
-                                 return set.name == item.name
-                            })
-                            if(index > -1){
-                                this.sets[index] = item
-                            }else{
-                                this.sets.push(item)
-                            }
-                        })
+                        this.replaceSettings(newValue)
+                    }else{
+                        this.defaultSettings()
                     }
                 }
             }
@@ -571,7 +1119,6 @@
             },
 
             randomize() {
-                console.log(this)
                 let H 
                 if(this.H == "?"){
                     H = this.getRandomInt(3,5)
@@ -682,10 +1229,89 @@
             save(){
                 this.dialog = false
                 localStorage.setItem('settings', JSON.stringify(this.settings));
-            }
+            },
+            loadSettings() {
+                try {
+                    this.settings = JSON.parse(this.textSettings);
+                    this.reloadSettings()
+                } catch (e) {
+                    return false;
+                }
+            },
+            reloadSettings() {
+                this.textSettings = JSON.stringify(this.settings, undefined, 4)
+            },
+            defaultSettings() {
+                this.replaceSettings(JSON.parse(JSON.stringify(defaultSettings)))
+                this.reloadSettings()
+            },
+            replaceSettings(newValue) {
+                this.villains = newValue.villains
+                this.env = newValue.env
+                this.heroes = newValue.heroes
+                this.sets = newValue.sets
+            },
+            additiveSettings(newValue) {
+                this.villains.forEach((item)=>{
+                    let index = newValue.villains.findIndex((villain)=>{
+                            return villain.name == item.name
+                    })
+                    if(index > -1){
+                        this.villains[index] = item
+                    }else{
+                        newValue.villains.push(item)
+                    }
+                })
+                this.villains = newValue.villains
+                this.env.forEach((item)=>{
+                    let index = newValue.env.findIndex((envDeck)=>{
+                            return envDeck.name == item.name
+                    })
+                    if(index > -1){
+                        newValue.env[index] = item
+                    }else{
+                        newValue.env.push(item)
+                    }
+                })
+                this.env = newValue.env
+                this.heroes.forEach((item)=>{
+                    let index = newValue.heroes.findIndex((hero)=>{
+                            return hero.name == item.name
+                    })
+                    if(index > -1){
+                        item.variants.forEach((subitem)=>{
+                            let i = newValue.heroes[index].variants.findIndex((variant)=>{
+                                return variant.name == subitem.name
+                            })
+                            if(i > -1){
+                                newValue.heroes[index].variants[i] = subitem
+                            }else{
+                                newValue.heroes[index].variants.push(subitem)
+                            }
+                        })
+
+                        newValue.heroes[index].active = item.active
+                    }else{
+                        newValue.heroes.push(item)
+                    }
+                })
+                this.heroes = newValue.heroes
+                this.sets.forEach((item)=>{
+                    let index = newValue.sets.findIndex((set)=>{
+                            return set.name == item.name
+                    })
+                    if(index > -1){
+                        newValue.sets[index] = item
+                    }else{
+                        newValue.sets.push(item)
+                    }
+                })
+                this.sets = newValue.sets
+            } 
         },
         mounted() {
             this.settings = JSON.parse(localStorage.getItem('settings'));
+            this.textSettings = JSON.stringify(this.settings, undefined, 4)
         }
     })
     app.use(vuetify).mount('#app')
