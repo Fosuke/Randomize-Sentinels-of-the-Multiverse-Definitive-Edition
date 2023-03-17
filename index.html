@@ -1135,6 +1135,9 @@
                 })
                 this.gameSetup.env = this.shuffle(this.activeList(this.env))[0]
                 this.gameSetup.villain = this.shuffle(this.activeList(this.villains))[0]
+                this.randomAdvanceEvent()
+            },
+            randomAdvanceEvent() {
                 if(this.advanced == "random"){
                     this.gameSetup.advanced = (this.getRandomInt(0,1) == 1)
                 }else{
@@ -1195,6 +1198,7 @@
                     return item.name != this.gameSetup.villain.name
                 })
                 this.gameSetup.villain = this.shuffle(this.activeList(newVillainList))[0]
+                this.randomAdvanceEvent()
             },
             reset() {
                 this.gameSetup = {
