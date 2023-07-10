@@ -1,6 +1,44 @@
-# Randomize-Sentinels-of-the-Multiverse-Definitive-Edition
-Randomize Sentinels of the Multiverse: Definitive Edition
+# default
 
-This is a randomizer for Sentinels of the Multiverse: Definitive Edition.
-The goal for this randomizer is to have as many features as a user could want.
-Let me know any features you would likw to see.
+## Project setup
+
+```
+# yarn
+yarn
+
+# npm
+npm install
+
+# pnpm
+pnpm install
+```
+
+### Compiles and hot-reloads for development
+
+```
+# yarn
+yarn dev
+
+# npm
+npm run dev
+
+# pnpm
+pnpm dev
+```
+
+### Compiles and minifies for production
+
+```
+# yarn
+yarn build
+
+# npm
+npm run build
+
+# pnpm
+pnpm build
+```
+
+### Customize configuration
+
+See [Configuration Reference](https://vitejs.dev/config/).
