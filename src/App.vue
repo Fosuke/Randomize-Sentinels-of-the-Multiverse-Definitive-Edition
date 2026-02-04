@@ -1086,6 +1086,10 @@ const defaultSetting = {
       name: "Rook City Renegades",
       active: true,
     },
+		{
+			name: "Disparation",
+			active: true,
+		},
   ],
 };
 
