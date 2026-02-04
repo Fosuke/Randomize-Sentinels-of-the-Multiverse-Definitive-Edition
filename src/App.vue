@@ -609,6 +609,17 @@ const defaultSetting = {
       deck: "Terrorform",
       set: "Rook City Renegades",
       active: true,
+    }, {
+      name: "The Dreamer",
+      deck: "The Dreamer",
+      set: "Disperation",
+      active: true,
+    },
+    {
+      name: "Mr. Jitters",
+      deck: "The Dreamer",
+      set: "Disperation",
+      active: true,
     },
   ],
   env: [
